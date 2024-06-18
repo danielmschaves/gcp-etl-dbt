@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "pypi-gcp-duckdb-dbt"
+name = "gcp-etl-dbt"
 version = "0.1.0"
 description = ""
 authors = ["danielmschaves <danielmschaves@gmail.com>"]

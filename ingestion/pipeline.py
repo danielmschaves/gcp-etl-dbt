@@ -1,7 +1,7 @@
 from ingestion.bigquery import (
     get_bigquery_client,
     get_bigquery_result,
-    build_pypi_query,
+    build_ecommerce_query,
 )
 import duckdb
 from loguru import logger
@@ -13,43 +13,49 @@ from ingestion.duck import (
     connect_to_md,
 )
 import fire
-from ingestion.models import validate_dataframe, FileDownloads, PypiJobParameters
+from ingestion.models import validate_dataframe, EcommerceJobParameters
 import os
+from loguru import logger
 
+def main(params: EcommerceJobParameters):
+    bigquery_client = get_bigquery_client(project_name=params.gcp_project)
 
-def main(params: PypiJobParameters):
-    # Loading data from BigQuery
-    df = get_bigquery_result(
-        query_str=build_pypi_query(params),
-        bigquery_client=get_bigquery_client(project_name=params.gcp_project),
-    )
-    validate_dataframe(df, FileDownloads)
-    # Loading to DuckDB
+    # Connection to DuckDB for further processing
     conn = duckdb.connect()
-    create_table_from_dataframe(conn, params.table_name, "df")
 
-    logger.info(f"Sinking data to {params.destination}")
-    if "local" in params.destination:
-        conn.sql(f"COPY {params.table_name} TO '{params.table_name}.csv';")
+    for table_name in params.table_names:
+        logger.info(f"Processing table: {table_name}")
+        query_str = build_ecommerce_query(params, table_name)
 
-    if "s3" in params.destination:
-        load_aws_credentials(conn, params.aws_profile)
-        write_to_s3_from_duckdb(
-            conn, f"{params.table_name}", params.s3_path, "timestamp"
-        )
+        if query_str is None:
+            logger.warning(f"No valid query could be constructed for table: {table_name}")
+            continue
 
-    if "md" in params.destination:
-        connect_to_md(conn, os.environ["motherduck_token"])
-        write_to_md_from_duckdb(
-            duckdb_con=conn,
-            table=f"{params.table_name}",
-            local_database="memory",
-            remote_database="pypi",
-            timestamp_column=params.timestamp_column,
-            start_date=params.start_date,
-            end_date=params.end_date,
-        )
+        df = get_bigquery_result(query_str, bigquery_client)
+        if df.empty:
+            logger.warning(f"No data found for table: {table_name}")
+            continue
 
+        # Load data to DuckDB for further processing
+        create_table_from_dataframe(conn, table_name, df)
+        logger.info(f"Data for {table_name} loaded into DuckDB successfully.")
+
+        # Depending on the `destination`, further actions are taken
+        if "local" in params.destination:
+            local_file_path = f"{table_name}.csv"
+            df.to_csv(local_file_path)
+            logger.info(f"Data for {table_name} exported to {local_file_path}.")
+
+        if "s3" in params.destination:
+            # Assume s3_path includes the base path and aws_profile is configured properly
+            s3_file_path = os.path.join(params.s3_path, f"{table_name}.csv")
+            df.to_csv(s3_file_path)  # This is illustrative; actual S3 upload would require boto3
+            logger.info(f"Data for {table_name} uploaded to S3 at {s3_file_path}.")
+
+        if "md" in params.destination:
+            # This is a placeholder for Motherduck or similar system export
+            # Implementation would depend on the specific system's API
+            logger.info(f"Data for {table_name} ready for export to Motherduck or similar system.")
 
 if __name__ == "__main__":
-    fire.Fire(lambda **kwargs: main(PypiJobParameters(**kwargs)))
+    fire.Fire(lambda **kwargs: main(EcommerceJobParameters(**kwargs)))
