@@ -1,9 +1,10 @@
 from pydantic import BaseModel, Field
-from typing import List, Union, Annotated, Type
+from typing import List, Union, Annotated, Type, Dict
 from pydantic import BaseModel, ValidationError
 from datetime import datetime
 from typing import Optional
 import pandas as pd
+import pyarrow as pa
 
 DUCKDB_EXTENSION = ["aws", "httpfs"]
 
@@ -102,24 +103,52 @@ class User(BaseModel):
     traffic_source: Optional[str]
     created_at: Optional[datetime]    
 
+    
 class EcommerceJobParameters(BaseModel):
     table_names: List[str]
     gcp_project: str
     destination: Annotated[Union[List[str], str], Field(default_factory=lambda: ["local"])]
     s3_path: Optional[str]
     aws_profile: Optional[str]
-    
 
-class DataFrameValidationError(Exception):
+# Mapping of table names to Pydantic models
+table_model_mapping: Dict[str, Type[BaseModel]] = {
+    "distribution_center": DistributionCenter,
+    "event": Event,
+    "inventory_item": InventoryItem,
+    "order_item": OrderItem,
+    "order": Order,
+    "product": Product,
+    "user": User,
+}
+
+
+class TableValidationError(Exception):
     """Custom exception for DataFrame validation errors."""
 
-def validate_dataframe(df: pd.DataFrame, model: BaseModel):
-    """Validates each row of a DataFrame against a Pydantic model."""
+def validate_table(table: pa.Table, table_name: str):
+    """
+    Validates each row of a PyArrow Table against a Pydantic model based on table name.
+    Raises TableValidationError if any row fails validation.
+
+    :param table: PyArrow Table to validate.
+    :param table_name: The name of the table to determine the model to validate against.
+    :raises: TableValidationError
+    """
+    model = table_model_mapping.get(table_name)
+    if not model:
+        raise ValueError(f"No model mapping found for table: {table_name}")
+
     errors = []
-    for i, row in enumerate(df.to_dict(orient='records')):
+    for i in range(table.num_rows):
+        row = {column: table[column][i].as_py() for column in table.column_names}
         try:
             model(**row)
         except ValidationError as e:
             errors.append(f"Row {i} failed validation: {e}")
+
     if errors:
-        raise DataFrameValidationError(f"DataFrame validation failed with the following errors:\n{'\n'.join(errors)}")
+        error_message = "\n".join(errors)
+        raise TableValidationError(
+            f"Table validation failed with the following errors:\n{error_message}"
+        )

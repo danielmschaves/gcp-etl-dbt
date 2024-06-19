@@ -5,12 +5,16 @@ from google.auth.exceptions import DefaultCredentialsError
 from loguru import logger
 from typing import List
 import time
-from models import EcommerceJobParameters 
+from models import EcommerceJobParameters
 import pandas as pd
+import pyarrow as pa
 
 ECOMMERCE_PUBLIC_DATASET = "bigquery-public-data.thelook_ecommerce"
 
-def build_ecommerce_query(params: EcommerceJobParameters, ecom_public_dataset: str = ECOMMERCE_PUBLIC_DATASET) -> List[str]:
+
+def build_ecommerce_query(
+    params: EcommerceJobParameters, ecom_public_dataset: str = ECOMMERCE_PUBLIC_DATASET
+) -> List[str]:
     """
     Generate SQL queries to query specific tables based on provided parameters.
 
@@ -31,6 +35,7 @@ def build_ecommerce_query(params: EcommerceJobParameters, ecom_public_dataset: s
             logger.warning(f"Invalid table name provided: {table_name}")
     return queries
 
+
 def get_bigquery_client(project_name: str) -> bigquery.Client:
     """
     Get BigQuery client.
@@ -49,34 +54,43 @@ def get_bigquery_client(project_name: str) -> bigquery.Client:
     try:
         service_account_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
         if service_account_path:
-            credentials = service_account.Credentials.from_service_account_file(service_account_path)
+            credentials = service_account.Credentials.from_service_account_file(
+                service_account_path
+            )
             return bigquery.Client(project=project_name, credentials=credentials)
-        raise EnvironmentError("No valid credentials found for BigQuery authentication.")
+        raise EnvironmentError(
+            "No valid credentials found for BigQuery authentication."
+        )
     except DefaultCredentialsError as creds_error:
         raise creds_error
-    
-def get_bigquery_results(queries: List[str], table_names: List[str], bigquery_client: bigquery.Client) -> dict:
+
+
+def get_bigquery_results(
+    queries: List[str], table_names: List[str], bigquery_client: bigquery.Client
+) -> dict:
     """
-    Execute queries and return results as a dictionary of pandas DataFrames.
+    Executes a list of BigQuery queries and returns the results as a dictionary of PyArrow Tables.
 
     Args:
-        queries (List[str]): A list of SQL queries to execute.
+        queries (List[str]): A list of BigQuery queries to execute.
         table_names (List[str]): A list of table names corresponding to each query.
         bigquery_client (bigquery.Client): The BigQuery client object used to execute the queries.
 
     Returns:
-        dict: A dictionary where the keys are table names and the values are pandas DataFrames containing the query results.
+        dict: A dictionary where the keys are the table names and the values are the query results as PyArrow Tables.
     """
-    dataframes = {}
+    tables = {}
     for query, table_name in zip(queries, table_names):
         try:
             logger.info(f"Running query for table: {table_name}")
             start_time = time.time()
-            df = bigquery_client.query(query).to_dataframe()
+            table = bigquery_client.query(query).to_arrow()
             elapsed_time = time.time() - start_time
-            logger.info(f"Query for {table_name} executed and data loaded in {elapsed_time:.2f} seconds")
-            dataframes[table_name] = df 
+            logger.info(
+                f"Query for {table_name} executed and data loaded in {elapsed_time:.2f} seconds"
+            )
+            tables[table_name] = table
         except Exception as e:
             logger.error(f"Error running query for {table_name}: {e}")
             raise
-    return dataframes  
+    return tables
