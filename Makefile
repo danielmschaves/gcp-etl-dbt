@@ -1,17 +1,22 @@
 include .env
 export 
 
-pypi-ingest: 
-	python -m ingestion.pipeline \
-		--start_date $$START_DATE \
-		--end_date $$END_DATE \
-		--pypi_project $$PYPI_PROJECT \
-		--table_name $$TABLE_NAME \
-		--s3_path $$S3_PATH \
-		--aws_profile $$AWS_PROFILE \
+data-ingestion: 
+	python ingestion/pipeline.py \
+		--table_names $$TABLE_NAMES \
 		--gcp_project $$GCP_PROJECT \
-		--timestamp_column $$TIMESTAMP_COLUMN \
-		--destination $$DESTINATION
+		--destination $$DESTINATION	\
+		--s3_path $$S3_PATH \
+		--aws_profile $$AWS_PROFILE
+
+run-etl:
+	python ingestion/pipeline.py \
+		--table_names "$$TABLE_NAMES" \
+		--gcp_project "$$GCP_PROJECT" \
+		--destination "$$DESTINATION" \
+		--s3_path "$$S3_PATH" \
+		--aws_profile "$$AWS_PROFILE"
+
 
 pypi-ingest-test:
 	pytest ingestion/tests

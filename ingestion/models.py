@@ -128,12 +128,18 @@ class TableValidationError(Exception):
 
 def validate_table(table: pa.Table, table_name: str):
     """
-    Validates each row of a PyArrow Table against a Pydantic model based on table name.
-    Raises TableValidationError if any row fails validation.
+    Validate the data in a table using a corresponding model.
 
-    :param table: PyArrow Table to validate.
-    :param table_name: The name of the table to determine the model to validate against.
-    :raises: TableValidationError
+    Args:
+        table (pa.Table): The table to be validated.
+        table_name (str): The name of the table.
+
+    Raises:
+        ValueError: If no model mapping is found for the given table name.
+        TableValidationError: If the table validation fails.
+
+    Returns:
+        None
     """
     model = table_model_mapping.get(table_name)
     if not model:

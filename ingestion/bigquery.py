@@ -90,7 +90,8 @@ def get_bigquery_results(
         try:
             logger.info(f"Running query for table: {table_name}")
             start_time = time.time()
-            table = bigquery_client.query(query).to_arrow()
+            query_job = bigquery_client.query(query)  # Start the query job
+            table = query_job.to_arrow()  # Fetch the results as a PyArrow Table
             elapsed_time = time.time() - start_time
             logger.info(
                 f"Query for {table_name} executed and data loaded in {elapsed_time:.2f} seconds"
