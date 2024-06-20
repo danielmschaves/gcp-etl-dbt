@@ -4,23 +4,24 @@ import fire
 import os
 import duckdb
 
-from ingestion.bigquery import (
+from bigquery import (
     get_bigquery_client,
     get_bigquery_results,
     build_ecommerce_query,
 )
-from ingestion.duck import (
+from duck import (
     create_table_from_pyarrow_tables,
     load_aws_credentials,
     write_to_s3_from_duckdb,
     write_to_md_from_duckdb,
     connect_to_md,
 )
-from ingestion.models import (
+from models import (
     TableValidationError,
     EcommerceJobParameters,
     validate_table
 )
+
 
 def main(params: EcommerceJobParameters):
     start_time = datetime.now()
@@ -29,15 +30,16 @@ def main(params: EcommerceJobParameters):
 
     queries = build_ecommerce_query(params)  
 
-    pyarrow_tables = {}  # Initialize an empty dictionary for PyArrow tables
+    # Since get_bigquery_results expects lists, ensure queries and params.table_names are passed as lists
+    pyarrow_tables = get_bigquery_results(
+        queries=queries,
+        table_names=params.table_names,
+        bigquery_client=bigquery_client,
+    )
 
-    for query, table_name in zip(queries, params.table_names):
-        # Loading data from BigQuery
-        pa_tbl = get_bigquery_results(
-            query_str=query,
-            bigquery_client=bigquery_client,
-        )
-         # Validate the PyArrow table with the respective model
+    # Iterate through the returned dictionary of PyArrow tables
+    for table_name, pa_tbl in pyarrow_tables.items():
+        # Validate the PyArrow table with the respective model
         try:
             logger.info(f"Validating table: {table_name}")
             validate_table(pa_tbl, table_name)
@@ -82,4 +84,6 @@ def main(params: EcommerceJobParameters):
     )
 
 if __name__ == "__main__":
-    fire.Fire(lambda **kwargs: main(EcommerceJobParameters(**kwargs)))
+    fire.Fire(lambda **kwargs: main(EcommerceJobParameters(
+        **{k: v.split(',') if k == 'table_names' and isinstance(v, str) else v for k, v in kwargs.items()}
+    )))

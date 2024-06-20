@@ -10,14 +10,14 @@ DUCKDB_EXTENSION = ["aws", "httpfs"]
 
 
 # Model for distribution_centers table
-class DistributionCenter(BaseModel):
+class DistributionCenters(BaseModel):
     id: Optional[int]
     name: Optional[str]
     latitude: Optional[float]
     longitude: Optional[float]
 
 # Model for events table
-class Event(BaseModel):
+class Events(BaseModel):
     id: Optional[int]
     user_id: Optional[int]
     sequence_number: Optional[int]
@@ -33,7 +33,7 @@ class Event(BaseModel):
     event_type: Optional[str]
 
 # Model for inventory_items table
-class InventoryItem(BaseModel):
+class InventoryItems(BaseModel):
     id: Optional[int]
     product_id: Optional[int]
     created_at: Optional[datetime]
@@ -48,7 +48,7 @@ class InventoryItem(BaseModel):
     product_distribution_center_id: Optional[int]
 
 # Model for order_items table
-class OrderItem(BaseModel):
+class OrderItems(BaseModel):
     id: Optional[int]
     order_id: Optional[int]
     user_id: Optional[int]
@@ -62,7 +62,7 @@ class OrderItem(BaseModel):
     sale_price: Optional[float]
 
 # Model for orders table
-class Order(BaseModel):
+class Orders(BaseModel):
     order_id: Optional[int]
     user_id: Optional[int]
     status: Optional[str]
@@ -74,7 +74,7 @@ class Order(BaseModel):
     num_of_item: Optional[int]
 
 # Model for products table
-class Product(BaseModel):
+class Products(BaseModel):
     id: Optional[int]
     cost: Optional[float]
     category: Optional[str]
@@ -86,7 +86,7 @@ class Product(BaseModel):
     distribution_center_id: Optional[int]
 
 # Model for users table
-class User(BaseModel):
+class Users(BaseModel):
     id: Optional[int]
     first_name: Optional[str]
     last_name: Optional[str]
@@ -113,13 +113,13 @@ class EcommerceJobParameters(BaseModel):
 
 # Mapping of table names to Pydantic models
 table_model_mapping: Dict[str, Type[BaseModel]] = {
-    "distribution_center": DistributionCenter,
-    "event": Event,
-    "inventory_item": InventoryItem,
-    "order_item": OrderItem,
-    "order": Order,
-    "product": Product,
-    "user": User,
+    "distribution_centers": DistributionCenters,
+    "events": Events,
+    "inventory_items": InventoryItems,
+    "order_items": OrderItems,
+    "orders": Orders,
+    "products": Products,
+    "users": Users,
 }
 
 

@@ -53,14 +53,20 @@ def get_bigquery_client(project_name: str) -> bigquery.Client:
     """
     try:
         service_account_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
+
         if service_account_path:
             credentials = service_account.Credentials.from_service_account_file(
                 service_account_path
             )
-            return bigquery.Client(project=project_name, credentials=credentials)
+            bigquery_client = bigquery.Client(
+                project=project_name, credentials=credentials
+            )
+            return bigquery_client
+
         raise EnvironmentError(
             "No valid credentials found for BigQuery authentication."
         )
+
     except DefaultCredentialsError as creds_error:
         raise creds_error
 

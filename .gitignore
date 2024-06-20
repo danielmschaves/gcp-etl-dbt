@@ -1,5 +1,6 @@
-pypi-gcp-duckdb-dbt-e9aaa5128377.json
+
 .env
 __pycache__
 .pytest_cache
 .json
+data/
