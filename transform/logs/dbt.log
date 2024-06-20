@@ -1,12 +1,12 @@
-[0m10:54:25.027106 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002AA8F9FD010>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002AA8D6F3F50>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002AA8F9FC7D0>]}
+[0m12:52:50.764869 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000024ED163AB50>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000024ED163A990>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000024ED163A850>]}
 
 
-============================== 10:54:25.032107 | 64cd5182-6ff4-4682-8ff3-98eac5927ae7 ==============================
-[0m10:54:25.032107 [info ] [MainThread]: Running with dbt=1.8.2
-[0m10:54:25.033107 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'indirect_selection': 'eager', 'write_json': 'True', 'log_cache_events': 'False', 'partial_parse': 'True', 'cache_selected_only': 'False', 'warn_error': 'None', 'debug': 'False', 'profiles_dir': 'C:\\Users\\danie\\.dbt', 'log_path': 'logs', 'fail_fast': 'False', 'version_check': 'True', 'use_colors': 'True', 'use_experimental_parser': 'False', 'no_print': 'None', 'quiet': 'False', 'log_format': 'default', 'introspect': 'True', 'static_parser': 'True', 'invocation_command': 'dbt init', 'target_path': 'None', 'warn_error_options': 'WarnErrorOptions(include=[], exclude=[])', 'send_anonymous_usage_stats': 'True'}
-[0m10:54:30.890451 [debug] [MainThread]: Starter project path: C:\Users\danie\AppData\Local\pypoetry\Cache\virtualenvs\gcp-etl-dbt-pBCZe8PC-py3.11\Lib\site-packages\dbt\include\starter_project
-[0m10:54:30.931965 [info ] [MainThread]: 
-Your new dbt project "gct_etl_dbt" was created!
+============================== 12:52:50.768868 | d20cb433-73d2-4f43-bd1e-09932289d230 ==============================
+[0m12:52:50.768868 [info ] [MainThread]: Running with dbt=1.8.2
+[0m12:52:50.769869 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'indirect_selection': 'eager', 'write_json': 'True', 'log_cache_events': 'False', 'partial_parse': 'True', 'cache_selected_only': 'False', 'profiles_dir': 'C:\\Users\\danie\\.dbt', 'version_check': 'True', 'debug': 'False', 'log_path': 'logs', 'fail_fast': 'False', 'warn_error': 'None', 'use_colors': 'True', 'use_experimental_parser': 'False', 'no_print': 'None', 'quiet': 'False', 'warn_error_options': 'WarnErrorOptions(include=[], exclude=[])', 'invocation_command': 'dbt init', 'static_parser': 'True', 'log_format': 'default', 'target_path': 'None', 'introspect': 'True', 'send_anonymous_usage_stats': 'True'}
+[0m12:52:57.213833 [debug] [MainThread]: Starter project path: C:\Users\danie\AppData\Local\pypoetry\Cache\virtualenvs\gcp-etl-dbt-pBCZe8PC-py3.11\Lib\site-packages\dbt\include\starter_project
+[0m12:52:57.234346 [info ] [MainThread]: 
+Your new dbt project "gcp_etl_dbt" was created!
 
 For more information on how to configure the profiles.yml file,
 please consult the dbt documentation here:
@@ -21,7 +21,7 @@ Need help? Don't hesitate to reach out to us via GitHub issues or on Slack:
 
 Happy modeling!
 
-[0m10:54:30.932963 [info ] [MainThread]: Setting up your profile.
-[0m10:54:33.161191 [debug] [MainThread]: Command `dbt init` succeeded at 10:54:33.161191 after 8.20 seconds
-[0m10:54:33.162190 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002AA8F9FD210>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002AA8F9FC7D0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000002AA88155050>]}
-[0m10:54:33.162190 [debug] [MainThread]: Flushing usage events
+[0m12:52:57.235458 [info ] [MainThread]: Setting up your profile.
+[0m12:53:00.399203 [debug] [MainThread]: Command `dbt init` succeeded at 12:53:00.398200 after 9.69 seconds
+[0m12:53:00.399203 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000024ECB0A5050>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000024ED13037D0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000024ECB0E67D0>]}
+[0m12:53:00.400203 [debug] [MainThread]: Flushing usage events

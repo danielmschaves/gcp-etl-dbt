@@ -1,0 +1,9 @@
+gcp_etl_dbt:
+  outputs:
+      dev:
+        type: duckdb
+        path: /tmp/dbt.duckdb
+      prod:
+        type: duckdb
+        path: "md:"
+    target: dev
