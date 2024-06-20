@@ -1,13 +1,25 @@
 version: 2
+
 sources:
   - name: ecommerce
+    config:
+      s3_access_key_id: "{{ env_var('AWS_ACCESS_KEY_ID') }}"
+      s3_secret_access_key: "{{ env_var('AWS_SECRET_ACCESS_KEY')}}"
+      s3_region: "{{ env_var('AWS_REGION') }}"
     meta:
-      external_location: "{{ env_var('TRANSFORM_S3_PATH_INPUT') }}"
+      external_location: "read_parquet('{{ env_var('TRANSFORM_S3_PATH_INPUT')}}/{name}.parquet')"
     tables:
       - name: distribution_centers
+        file_format: parquet
       - name: events
+        file_format: parquet
       - name: inventory_items
-      - name: orders_items
+        file_format: parquet
+      - name: order_items
+        file_format: parquet
       - name: orders
+        file_format: parquet
       - name: products
+        file_format: parquet
       - name: users
+        file_format: parquet

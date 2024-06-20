@@ -1,4 +1,7 @@
-{{ config(materialized='view' )}}
+
+  
+  create view "ecommerce"."the_look_ecommerce"."stg_products__dbt_tmp" as (
+    
 
 with stg_products as (
     select 
@@ -12,7 +15,8 @@ with stg_products as (
         cast(sku as string) as sku,
         cast(distribution_center_id as int) as distribution_center_id
 
-    from {{ source('ecommerce', 'products' ) }}
+    from read_parquet('s3://pypi-gcp-duckdb-dbt-197398273774/products.parquet')
 )
 
 select * from stg_products
+  );

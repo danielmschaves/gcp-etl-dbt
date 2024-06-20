@@ -33,7 +33,6 @@ models:
   gcp_etl_dbt:
     # Config indicated by + and applies to all files under models/example/
     staging:
-      +materialized: "{{ 'incremental' if target.name == 'prod' else 'table' }}"
-    
+      +materialized: view
     marts:
       +materialized: table

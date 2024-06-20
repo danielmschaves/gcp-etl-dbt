@@ -1,4 +1,4 @@
-{{ config(materialized='view' )}}
+
 
 with stg_orders as (
     select 
@@ -12,7 +12,7 @@ with stg_orders as (
         cast(delivered_at as timestamp) as delivered_at,
         cast(num_of_item as int) as num_of_item
 
-    from {{ source('ecommerce', 'orders' ) }}
+    from read_parquet('s3://pypi-gcp-duckdb-dbt-197398273774/orders.parquet')
 )
 
 select * from stg_orders

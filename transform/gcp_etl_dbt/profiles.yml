@@ -1,9 +1,21 @@
 gcp_etl_dbt:
   outputs:
-      dev:
-        type: duckdb
-        path: /tmp/dbt.duckdb
-      prod:
-        type: duckdb
-        path: "md:"
-    target: dev
+    dev:
+      type: duckdb
+      path: dbt.duckdb
+      extensions:
+        - httpfs
+        - parquet
+      settings:
+        s3_access_key_id: "{{ env_var('AWS_ACCESS_KEY_ID') }}"
+        s3_secret_access_key: "{{ env_var('AWS_SECRET_ACCESS_KEY')}}"
+        s3_region: "{{ env_var('AWS_REGION') }}"
+    prod:
+      type: duckdb
+      schema: the_look_ecommerce
+      path: "md:ecommerce"
+      settings:
+        s3_access_key_id: "{{ env_var('AWS_ACCESS_KEY_ID') }}"
+        s3_secret_access_key: "{{ env_var('AWS_SECRET_ACCESS_KEY')}}"
+        s3_region: "{{ env_var('AWS_REGION') }}"
+  target: dev
