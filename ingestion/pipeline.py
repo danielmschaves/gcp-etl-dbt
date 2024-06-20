@@ -24,13 +24,21 @@ from models import (
 
 
 def main(params: EcommerceJobParameters):
+    """
+    Executes the main ETL pipeline for the Ecommerce job.
+
+    Args:
+        params (EcommerceJobParameters): The parameters for the Ecommerce job.
+
+    Returns:
+        None
+    """
     start_time = datetime.now()
     bigquery_client = get_bigquery_client(project_name=params.gcp_project)
     conn = duckdb.connect()
 
     queries = build_ecommerce_query(params)  
 
-    # Since get_bigquery_results expects lists, ensure queries and params.table_names are passed as lists
     pyarrow_tables = get_bigquery_results(
         queries=queries,
         table_names=params.table_names,
@@ -73,7 +81,7 @@ def main(params: EcommerceJobParameters):
             write_to_md_from_duckdb(
                 duckdb_con=conn,
                 table=table_name,
-                local_database="main",  # Assuming "main" is the local database name
+                local_database="local",
                 remote_database="ecommerce",
             )
 
