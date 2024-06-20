@@ -3,7 +3,6 @@ from loguru import logger
 import fire
 import os
 import duckdb
-import argparse
 
 from bigquery import (
     get_bigquery_client,
@@ -22,23 +21,6 @@ from models import (
     EcommerceJobParameters,
     validate_table
 )
-
-def parse_args():
-    """Parse command-line arguments."""
-    parser = argparse.ArgumentParser(description='ETL pipeline for Ecommerce data.')
-    parser.add_argument('--gcp_project', required=True, help='GCP project name')
-    parser.add_argument('--table_names', nargs='+', help='List of table names', required=True)
-    parser.add_argument('--destination', required=True, help='Destination for the data')
-    parser.add_argument('--s3_path', help='S3 path for data storage')
-    parser.add_argument('--aws_profile', help='AWS profile for S3 access')
-    args = parser.parse_args()
-    return EcommerceJobParameters(
-        gcp_project=args.gcp_project,
-        table_names=args.table_names,
-        destination=args.destination,
-        s3_path=args.s3_path,
-        aws_profile=args.aws_profile
-    )
 
 
 def main(params: EcommerceJobParameters):
@@ -110,5 +92,6 @@ def main(params: EcommerceJobParameters):
     )
 
 if __name__ == "__main__":
-    params = parse_args()
-    main(params)
+    fire.Fire(lambda **kwargs: main(EcommerceJobParameters(
+        **{k: v.split(',') if k == 'table_names' and isinstance(v, str) else v for k, v in kwargs.items()}
+    )))
