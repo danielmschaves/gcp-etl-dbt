@@ -1,7 +1,4 @@
 
-  
-  create view "dbt"."main"."stg_order_items__dbt_tmp" as (
-    
 
 with stg_order_items as (
     select 
@@ -20,4 +17,3 @@ with stg_order_items as (
 )
 
 select * from stg_order_items
-  );

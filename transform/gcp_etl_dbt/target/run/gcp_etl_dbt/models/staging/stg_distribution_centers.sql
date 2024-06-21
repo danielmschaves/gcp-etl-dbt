@@ -1,6 +1,6 @@
 
   
-  create view "ecommerce"."the_look_ecommerce"."stg_distribution_centers__dbt_tmp" as (
+  create view "dbt"."main"."stg_distribution_centers__dbt_tmp" as (
     
 
 with stg_distribution_centers as (

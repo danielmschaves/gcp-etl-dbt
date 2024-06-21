@@ -2,7 +2,7 @@
 
 with stg_events as (
     select 
-        cast(id as int) as id,
+        cast(id as int) as event_id,
         cast(user_id as int) as user_id,
         cast(sequence_number as int) as sequence_number,
         cast(session_id as string) as session_id,

@@ -2,12 +2,12 @@
 
 with stg_users as (
     select 
-        cast(id as int) as id,
+        cast(id as int) as user_id,
         cast(first_name as string) as first_name,
         cast(last_name as string) as last_name,
         cast(email as string) as email,
         cast(age as int) as age,
-        cast(gender as string),
+        cast(gender as string) as gender,
         cast(state as string) as state,
         cast(street_address as string) as street_address,
         cast(postal_code as string) as postal_code,

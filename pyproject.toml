@@ -21,6 +21,7 @@ dbt-duckdb = {version = "1.8.1", extras = ["md"]}
 pytest = "^8.2.2"
 numpy = "<2.0.0"
 black = "^24.4.2"
+harlequin = "^1.21.0"
 
 
 [build-system]
