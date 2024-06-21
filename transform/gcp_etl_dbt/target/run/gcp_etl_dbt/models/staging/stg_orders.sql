@@ -1,6 +1,6 @@
 
   
-  create view "ecommerce"."the_look_ecommerce"."stg_orders__dbt_tmp" as (
+  create view "dbt"."main"."stg_orders__dbt_tmp" as (
     
 
 with stg_orders as (

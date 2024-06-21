@@ -1,6 +1,6 @@
 
   
-  create view "dbt"."main"."stg_order_items__dbt_tmp" as (
+  create view "dbt"."main"."stg_order_item__dbt_tmp" as (
     
 
 with stg_order_items as (

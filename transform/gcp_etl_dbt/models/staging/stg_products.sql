@@ -2,7 +2,7 @@
 
 with stg_products as (
     select 
-        cast(id as int) as id,
+        cast(id as int) as product_id,
         cast(cost as float) as cost,
         cast(category as string) as category,
         cast(name as string) as name,

@@ -9,3 +9,6 @@ dbt_packages/
 logs/
 .duckdb
 .duckdb;
+graph.gpickle
+manifest.json
+partial_parse.msgpack
