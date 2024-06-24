@@ -132,10 +132,3 @@ You can then run the following commands:
 * `make data-transformation DBT_TARGET=dev` : example of a run reading from S3 and writing to AWS S3  
 * `make data-transformation DBT_TARGET=prod` : example of a run reading from S3 and writing to MotherDuck
 * `make data-transformation-test` : run the unit tests located in `/transform/gcp_etl_dbt/tests`
-
-## Usage
-
-The pipeline can be run from the command line using the `fire` library. Example:
-
-```bash
-python pipeline.py --table_names=users,orders --gcp_project=my-project --destination=local,s3 --s3_path=s3://my-bucket/data --aws_profile=default
