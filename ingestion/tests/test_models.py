@@ -111,9 +111,14 @@ def load_data_into_duckdb(duckdb_connection):
         'users': 'data/users.csv'
     }
     for table, csv_file in csv_files.items():
-        conn.execute(f"""
-            CREATE TABLE {table} AS SELECT * FROM read_csv_auto('{csv_file}', header=True)
-        """)
+        if table in ['orders', 'users']:
+            conn.execute(f"""
+                CREATE TABLE {table} AS SELECT * FROM read_csv_auto('{csv_file}', header=True, types={{'gender': 'VARCHAR'}})
+            """)
+        else:
+            conn.execute(f"""
+                CREATE TABLE {table} AS SELECT * FROM read_csv_auto('{csv_file}', header=True)
+            """)
     return conn
 
 # Test cases for each table
