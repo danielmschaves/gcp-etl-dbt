@@ -1,0 +1,171 @@
+version: 2
+
+# test all models dim_date, dim_product, dim_store, fact_sales
+
+models:
+  - name: dim_users
+    description: "User dimension table"
+    columns:
+      - name: user_id
+        description: "Unique user identifier"
+        tests:
+          - unique
+      - name: fist_name
+        description: "User name"
+        tests:
+          - not_null
+      - name: last_name
+        description: "User name"
+        tests:
+          - not_null
+      - name: email
+        description: "User email"
+        tests:
+          - not_null
+
+  - name: dim_products
+    description: "Product dimension table"
+    columns:
+      - name: product_id
+        description: "Unique product identifier"
+        tests:
+          - unique
+      - name: name 
+        description: "Product name"
+        tests:
+          - not_null
+      - name: category
+        description: "Product category"
+        tests:
+          - not_null
+      - name: brand
+        description: "Product brand"
+        tests:
+          - not_null
+      - name: department
+        description: "Product department"
+        tests:
+          - not_null
+      - name: sku
+        description: "Product sku"
+        tests:
+          - not_null
+      - name: retail_price
+        description: "Product retail price"
+        tests:
+          - not_null
+
+  - name: dim_orders
+    description: "Order dimension table"
+    columns:
+      - name: order_id
+        description: "Unique order identifier"
+        tests:
+          - unique
+      - name: user_id
+        description: "User identifier"
+        tests:
+          - not_null
+      - name: status
+        description: "Order status"
+        tests:
+          - not_null
+      - name: created_at
+        description: "Order creation date"
+        tests:
+          - not_null
+      - name: shipped_at
+        description: "Order shipping date"
+        tests:
+          - not_null
+      - name: delivered_at
+        description: "Order delivery date"
+        tests:
+          - not_null
+      - name: returned_at
+        description: "Order return date"
+        tests:
+          - not_null
+
+  - name: dim_date
+    description: "Date dimension table"
+    columns:
+      - name: date_key
+        description: "Unique date identifier"
+        tests:
+          - unique
+      - name: date
+        description: "Date"
+        tests:
+          - not_null
+      - name: day
+        description: "Day"
+        tests:
+          - not_null
+      - name: month
+        description: "Month"
+        tests:
+          - not_null
+      - name: quarter
+        description: "Quarter"
+        tests:
+          - not_null
+      - name: year
+        description: "Year"
+        tests:
+          - not_null
+      - name: day_of_week
+        description: "Day of week"
+        tests:
+          - not_null
+
+  - name: fact_order_items
+    description: "Order items fact table"
+    columns:
+      - name: order_item_id
+        description: "Unique order item identifier"
+        tests:
+          - unique
+      - name: order_id
+        description: "Order identifier"
+        tests:
+          - not_null
+      - name: product_id
+        description: "Product identifier"
+        tests:
+          - not_null
+      - name: user_id
+        description: "User identifier"
+        tests:
+          - not_null
+      - name: order_date_key
+        description: "Order date key"
+        tests:
+          - not_null
+      - name: shipped_date_key
+        description: "Shipped date key"
+        tests:
+          - not_null
+      - name: delivered_date_key
+        description: "Delivered date key"
+        tests:
+          - not_null
+      - name: returned_date_key
+        description: "Returned date key"
+        tests:
+          - not_null
+      - name: sale_price
+        description: "Order item sale price"
+        tests:
+          - not_null
+      - name: quantity
+        description: "Order item quantity"
+        tests:
+          - not_null
+      - name: cost
+        description: "Order item cost"
+        tests:
+          - not_null
+
+
+      
