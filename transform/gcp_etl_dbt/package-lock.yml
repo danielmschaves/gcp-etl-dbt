@@ -3,4 +3,4 @@ packages:
     revision: e54329c3971c8c397f284a36de6a627832a24263
   - package: dbt-labs/dbt_utils
     version: 1.2.0
-sha1_hash: 489e353aef73788c75f5b4d9348741e99d4d1bdb
+sha1_hash: 754df7bc2aa5718355e8e7bb1cb0b60a5219b910

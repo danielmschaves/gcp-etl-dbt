@@ -1,33 +1,34 @@
--- models/dim_date.sql
+{{ config(
+    schema='gold',
+    materialized='table'
+) }}
 
-WITH date_range AS (
-    SELECT
-        MIN(DATE(created_at)) AS min_date,
-        MAX(DATE(created_at)) AS max_date
-    FROM (
-        SELECT created_at FROM {{ ref('stg_orders') }}
-        UNION ALL
-        SELECT created_at FROM {{ ref('stg_order_items') }}
-    ) AS combined_dates
+WITH all_dates AS (
+  SELECT created_at AS date
+  FROM {{ ref('stg_orders') }}
+  UNION ALL
+  SELECT created_at AS date
+  FROM {{ ref('stg_order_items') }}
 ),
-
-date_spine AS (
-    SELECT DATEADD(DAY, seq, min_date) AS date
-    FROM date_range
-    JOIN (
-        SELECT ROW_NUMBER() OVER () - 1 AS seq
-        FROM {{ ref('stg_orders') }},
-            {{ ref('stg_order_items') }}
-    ) AS sequence
-    WHERE DATEADD(DAY, seq, min_date) <= max_date
+date_range AS (
+  SELECT
+    MIN(date) AS min_date,
+    MAX(date) AS max_date
+  FROM all_dates
+),
+filtered_dates AS (
+  SELECT date
+  FROM all_dates, date_range
+  WHERE date BETWEEN date_range.min_date AND date_range.max_date
 )
-
 SELECT
-    CAST(DATE_FORMAT(date, '%Y%m%d') AS INT) AS date_key,
-    date,
-    DAY(date) AS day,
-    MONTH(date) AS month,
-    QUARTER(date) AS quarter,
-    YEAR(date) AS year,
-    DAYOFWEEK(date) AS day_of_week
-FROM date_spine
+  CONCAT(EXTRACT(YEAR FROM date)::TEXT, 
+         LPAD(EXTRACT(MONTH FROM date)::TEXT, 2, '0'), 
+         LPAD(EXTRACT(DAY FROM date)::TEXT, 2, '0')) AS date_key,
+  date,
+  EXTRACT(DAY FROM date) AS day,
+  EXTRACT(MONTH FROM date) AS month,
+  EXTRACT(QUARTER FROM date) AS quarter,
+  EXTRACT(YEAR FROM date) AS year,
+  EXTRACT(DOW FROM date) AS day_of_week
+FROM filtered_dates

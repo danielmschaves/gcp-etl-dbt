@@ -2,7 +2,7 @@
 
 with stg_order_items as (
     select 
-        cast(id as int) as id,
+        cast(id as int) as orther_item_id,
         cast(order_id as int) as order_id,
         cast(user_id as int) as user_id,
         cast(product_id as int) as product_id,
