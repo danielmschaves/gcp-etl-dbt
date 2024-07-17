@@ -1,5 +1,3 @@
--- models/fact_order_items.sql
-
 WITH order_items AS (
     SELECT * FROM {{ ref('stg_order_items') }}
 ),
@@ -10,7 +8,7 @@ order_facts AS (
         oi.order_id,
         oi.product_id,
         o.user_id,
-        o.num_of_item
+        o.num_of_item, 
         {{ custom_date_format('o.created_at') }} AS order_date_key,
         {{ custom_date_format('o.shipped_at') }} AS shipped_date_key,
         {{ custom_date_format('o.delivered_at') }} AS delivered_date_key,

@@ -7,16 +7,14 @@
 
 with dim_orders as (
     select
-        order_item_id,
         order_id,
         user_id,
-        product_id,
         status,
         created_at,
         shipped_at,
         delivered_at,
         returned_at,
-        sale_price
+        num_of_item
     from {{ ref('stg_orders') }}
 )
 
