@@ -12,15 +12,14 @@ WITH date_range AS (
 ),
 
 date_spine AS (
-    SELECT
-        DATEADD(day, seq, min_date) AS date
+    SELECT DATEADD(DAY, seq, min_date) AS date
     FROM date_range
     JOIN (
-        SELECT row_number() OVER () - 1 as seq
+        SELECT ROW_NUMBER() OVER () - 1 AS seq
         FROM {{ ref('stg_orders') }},
-             {{ ref('stg_order_items') }}
+            {{ ref('stg_order_items') }}
     ) AS sequence
-    WHERE DATEADD(day, seq, min_date) <= max_date
+    WHERE DATEADD(DAY, seq, min_date) <= max_date
 )
 
 SELECT

@@ -22,6 +22,7 @@ pytest = "^8.2.2"
 numpy = "<2.0.0"
 black = "^24.4.2"
 harlequin = "^1.21.0"
+sqlfluff = "^3.0.7"
 
 
 [build-system]

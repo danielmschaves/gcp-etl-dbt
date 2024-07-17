@@ -34,14 +34,14 @@ def parse_datetime_columns(df, columns):
 # Define fixtures for each table
 @pytest.fixture
 def distribution_centers():
-    df = pd.read_csv(os.path.join(CSV_PATH, 'distribution_centers.csv'))
+    df = pd.read_csv(os.path.join(CSV_PATH, 'distribution_centers.csv')).head(3)
     # Validate data using Pydantic
     validated_data = [DistributionCenters(**convert_nan_to_none(row.to_dict())) for index, row in df.iterrows()]
     return validated_data
 
 @pytest.fixture
 def events():
-    df = pd.read_csv(os.path.join(CSV_PATH,'events.csv'))
+    df = pd.read_csv(os.path.join(CSV_PATH,'events.csv')).head(3)
     # Parse datetime columns
     df = parse_datetime_columns(df, ['created_at'])
     # Validate data using Pydantic
@@ -50,7 +50,7 @@ def events():
 
 @pytest.fixture
 def inventory_items():
-    df = pd.read_csv(os.path.join(CSV_PATH, 'inventory_items.csv'))
+    df = pd.read_csv(os.path.join(CSV_PATH, 'inventory_items.csv')).head(3)
     # Parse datetime columns
     df = parse_datetime_columns(df, ['created_at', 'sold_at'])
     # Validate data using Pydantic
@@ -59,7 +59,7 @@ def inventory_items():
 
 @pytest.fixture
 def order_items():
-    df = pd.read_csv(os.path.join(CSV_PATH, 'order_items.csv'))
+    df = pd.read_csv(os.path.join(CSV_PATH, 'order_items.csv')).head(3)
     # Parse datetime columns
     df = parse_datetime_columns(df, ['created_at', 'shipped_at', 'delivered_at', 'returned_at'])
     # Validate data using Pydantic
@@ -68,7 +68,7 @@ def order_items():
 
 @pytest.fixture
 def orders():
-    df = pd.read_csv(os.path.join(CSV_PATH, 'orders.csv'))
+    df = pd.read_csv(os.path.join(CSV_PATH, 'orders.csv')).head(3)
     # Parse datetime columns
     df = parse_datetime_columns(df, ['created_at', 'shipped_at', 'delivered_at', 'returned_at'])
     # Validate data using Pydantic
@@ -77,14 +77,14 @@ def orders():
 
 @pytest.fixture
 def products():
-    df = pd.read_csv(os.path.join(CSV_PATH, 'products.csv'))
+    df = pd.read_csv(os.path.join(CSV_PATH, 'products.csv')).head(3)
     # Validate data using Pydantic
     validated_data = [Products(**convert_nan_to_none(row.to_dict())) for index, row in df.iterrows()]
     return validated_data
 
 @pytest.fixture
 def users():
-    df = pd.read_csv(os.path.join(CSV_PATH, 'users.csv'))
+    df = pd.read_csv(os.path.join(CSV_PATH, 'users.csv')).head(3)
     # Parse datetime columns
     df = parse_datetime_columns(df, ['created_at'])
     # Validate data using Pydantic

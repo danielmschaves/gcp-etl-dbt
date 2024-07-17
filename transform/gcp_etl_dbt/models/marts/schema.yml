@@ -10,6 +10,8 @@ models:
         description: "Unique user identifier"
         tests:
           - unique
+          - relationships:
+              to: dim_orders.user_id
       - name: fist_name
         description: "User name"
         tests:
