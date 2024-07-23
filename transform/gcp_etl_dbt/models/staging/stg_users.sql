@@ -1,4 +1,4 @@
-{{ config(materialized='view' )}}
+{{ config(materialized='table' )}}
 
 with stg_users as (
     select 

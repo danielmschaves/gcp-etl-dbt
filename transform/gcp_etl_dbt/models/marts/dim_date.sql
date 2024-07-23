@@ -3,12 +3,10 @@
     materialized='table'
 ) }}
 
+
 WITH all_dates AS (
-  SELECT created_at AS date
+  SELECT CAST(created_at AS DATE) AS date
   FROM {{ ref('stg_orders') }}
-  UNION ALL
-  SELECT created_at AS date
-  FROM {{ ref('stg_order_items') }}
 ),
 date_range AS (
   SELECT
@@ -20,15 +18,25 @@ filtered_dates AS (
   SELECT date
   FROM all_dates, date_range
   WHERE date BETWEEN date_range.min_date AND date_range.max_date
+),
+date_keys AS (
+  SELECT
+    {{ format_date_key('date') }} AS date_key,
+    date,
+    EXTRACT(DAY FROM date) AS day,
+    EXTRACT(MONTH FROM date) AS month,
+    EXTRACT(QUARTER FROM date) AS quarter,
+    EXTRACT(YEAR FROM date) AS year,
+    EXTRACT(DOW FROM date) AS day_of_week
+  FROM filtered_dates
 )
+
 SELECT
-  CONCAT(EXTRACT(YEAR FROM date)::TEXT, 
-         LPAD(EXTRACT(MONTH FROM date)::TEXT, 2, '0'), 
-         LPAD(EXTRACT(DAY FROM date)::TEXT, 2, '0')) AS date_key,
+  DISTINCT(date_key) as date_key,
   date,
-  EXTRACT(DAY FROM date) AS day,
-  EXTRACT(MONTH FROM date) AS month,
-  EXTRACT(QUARTER FROM date) AS quarter,
-  EXTRACT(YEAR FROM date) AS year,
-  EXTRACT(DOW FROM date) AS day_of_week
-FROM filtered_dates
+  day,
+  month,
+  quarter,
+  year,
+  day_of_week
+FROM date_keys

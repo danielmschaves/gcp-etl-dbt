@@ -1,7 +1,13 @@
 
   
-  create view "dbt"."main"."stg_distribution_centers__dbt_tmp" as (
     
+    
+
+    create  table
+      "dbt"."main"."stg_distribution_centers__dbt_tmp"
+  
+    as (
+      
 
 with stg_distribution_centers as (
     select 
@@ -13,4 +19,6 @@ with stg_distribution_centers as (
 )
 
 select * from stg_distribution_centers
-  );
+    );
+  
+  

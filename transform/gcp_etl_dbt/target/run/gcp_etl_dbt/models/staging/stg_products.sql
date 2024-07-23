@@ -1,7 +1,13 @@
 
   
-  create view "dbt"."main"."stg_products__dbt_tmp" as (
     
+    
+
+    create  table
+      "dbt"."main"."stg_products__dbt_tmp"
+  
+    as (
+      
 
 with stg_products as (
     select 
@@ -19,4 +25,6 @@ with stg_products as (
 )
 
 select * from stg_products
-  );
+    );
+  
+  

@@ -1,7 +1,13 @@
 
   
-  create view "dbt"."main"."stg_orders__dbt_tmp" as (
     
+    
+
+    create  table
+      "dbt"."main"."stg_orders__dbt_tmp"
+  
+    as (
+      
 
 with stg_orders as (
     select 
@@ -19,4 +25,6 @@ with stg_orders as (
 )
 
 select * from stg_orders
-  );
+    );
+  
+  

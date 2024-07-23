@@ -20,10 +20,17 @@ run-etl:
 pipeline-test:
 	pytest ingestion/tests
 
-data-transform:
+dbt-transform:
 	cd $$DBT_FOLDER && \
-	dbt run \
-		--target $$DBT_TARGET 
+	dbt run
+
+dbt-debug:
+	cd $$DBT_FOLDER && \
+	dbt debug 
+
+dbt-compile:
+	cd $$DBT_FOLDER && \
+	dbt compile 
 
 # Note : start_date and end_date depends on the mock data in the test
 data-transform-test:
@@ -31,6 +38,8 @@ data-transform-test:
 	dbt test \
 		--vars '{"start_date": "2023-04-01", "end_date": "2023-04-03"}'
 
+dashboard:
+	
 
 ## Development
 install: 

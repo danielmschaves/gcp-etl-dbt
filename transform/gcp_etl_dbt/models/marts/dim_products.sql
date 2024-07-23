@@ -6,6 +6,7 @@
 with dim_products as (
     select
         product_id,
+        cost,
         name,
         category,
         brand,

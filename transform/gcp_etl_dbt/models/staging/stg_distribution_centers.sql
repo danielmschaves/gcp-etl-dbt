@@ -1,5 +1,5 @@
 
-{{ config(materialized='view' ) }}
+{{ config(materialized='table' ) }}
 
 with stg_distribution_centers as (
     select 

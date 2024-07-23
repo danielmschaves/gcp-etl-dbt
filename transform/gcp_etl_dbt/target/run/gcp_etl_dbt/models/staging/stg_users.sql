@@ -1,7 +1,13 @@
 
   
-  create view "dbt"."main"."stg_users__dbt_tmp" as (
     
+    
+
+    create  table
+      "dbt"."main"."stg_users__dbt_tmp"
+  
+    as (
+      
 
 with stg_users as (
     select 
@@ -25,4 +31,6 @@ with stg_users as (
 )
 
 select * from stg_users
-  );
+    );
+  
+  

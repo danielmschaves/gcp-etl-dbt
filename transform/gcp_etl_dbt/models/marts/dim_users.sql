@@ -15,6 +15,8 @@ with dim_users as (
         city,
         state,
         country,
+        latitude,
+        longitude,
         traffic_source
     from {{ ref('stg_users') }}
 )

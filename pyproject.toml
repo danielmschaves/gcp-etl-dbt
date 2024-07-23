@@ -23,6 +23,8 @@ numpy = "<2.0.0"
 black = "^24.4.2"
 harlequin = "^1.21.0"
 sqlfluff = "^3.0.7"
+streamlit = "^1.36.0"
+plotly = "^5.22.0"
 
 
 [build-system]
