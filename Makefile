@@ -32,13 +32,9 @@ dbt-compile:
 	cd $$DBT_FOLDER && \
 	dbt compile 
 
-# Note : start_date and end_date depends on the mock data in the test
-data-transform-test:
-	cd 
-	dbt test \
-		--vars '{"start_date": "2023-04-01", "end_date": "2023-04-03"}'
-
 dashboard:
+	cd dashboard && \
+	streamlit run app.py
 	
 
 ## Development
