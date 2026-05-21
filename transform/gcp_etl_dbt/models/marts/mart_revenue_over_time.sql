@@ -1,28 +1,18 @@
-{{ config(
-    schema='gold',
-    materialized='view'
-) }}
-
-
 WITH fact_order_items AS (
-    SELECT 
-        order_id,
-        user_id,
-        product_id,
+    SELECT
         order_date_key,
-        sale_price,
-        num_of_item,
-        status,
-        shipped_date_key
+        sale_price
     FROM {{ ref('fact_order_items') }}
 ),
+
 dim_date AS (
-    SELECT 
+    SELECT
         date_key,
         date
     FROM {{ ref('dim_date') }}
 )
-SELECT 
+
+SELECT
     dd.date,
     SUM(foi.sale_price) AS total_revenue
 FROM fact_order_items foi

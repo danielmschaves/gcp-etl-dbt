@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  quality:
+    name: Lint & Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+      - name: Install dependencies
+        run: uv sync --group dev
+      - name: Check formatting
+        run: uv run ruff format --check .
+      - name: Lint
+        run: uv run ruff check .
+
+  test-ingestion:
+    name: Ingestion Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+      - name: Install dependencies
+        run: uv sync --group dev
+      - name: Run tests
+        run: uv run pytest ingestion/tests -v
+
+  dbt-validate:
+    name: dbt Compile
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: "placeholder"
+      AWS_SECRET_ACCESS_KEY: "placeholder"
+      AWS_REGION: "us-east-1"
+      TRANSFORM_S3_PATH_INPUT: "s3://placeholder"
+      MOTHERDUCK_TOKEN: "placeholder"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+      - name: Install dependencies
+        run: uv sync --group dev
+      - name: Install dbt packages
+        working-directory: transform/gcp_etl_dbt
+        run: uv run dbt deps
+      - name: Compile dbt models
+        working-directory: transform/gcp_etl_dbt
+        run: uv run dbt compile --target dev

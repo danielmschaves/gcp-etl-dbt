@@ -1,11 +1,5 @@
-
-{{ config(
-    schema='gold',
-    materialized='table'
-) }}
-
-with dim_users as (
-    select
+WITH dim_users AS (
+    SELECT
         user_id,
         first_name,
         last_name,
@@ -18,7 +12,7 @@ with dim_users as (
         latitude,
         longitude,
         traffic_source
-    from {{ ref('stg_users') }}
+    FROM {{ ref('stg_users') }}
 )
 
-select * from dim_users
+SELECT * FROM dim_users

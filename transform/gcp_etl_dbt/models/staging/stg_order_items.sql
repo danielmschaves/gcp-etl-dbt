@@ -1,20 +1,17 @@
-{{ config(materialized='table' )}}
-
-with stg_order_items as (
-    select 
-        cast(id as int) as order_item_id,
-        cast(order_id as int) as order_id,
-        cast(user_id as int) as user_id,
-        cast(product_id as int) as product_id,
-        cast(inventory_item_id as int) as inventory_item_id,
-        cast(status as string) as status,
-        cast(created_at as timestamp) as created_at,
-        cast(shipped_at as timestamp) as shipped_at,
-        cast(delivered_at as timestamp) as delivered_at,
-        cast(returned_at as timestamp) as returned_at,
-        cast(sale_price as float) as sale_price
-        
-    from {{ source('ecommerce', 'order_items' ) }}
+WITH stg_order_items AS (
+    SELECT
+        CAST(id AS INTEGER)               AS order_item_id,
+        CAST(order_id AS INTEGER)         AS order_id,
+        CAST(user_id AS INTEGER)          AS user_id,
+        CAST(product_id AS INTEGER)       AS product_id,
+        CAST(inventory_item_id AS INTEGER) AS inventory_item_id,
+        CAST(status AS VARCHAR)           AS status,
+        CAST(created_at AS TIMESTAMP)     AS created_at,
+        CAST(shipped_at AS TIMESTAMP)     AS shipped_at,
+        CAST(delivered_at AS TIMESTAMP)   AS delivered_at,
+        CAST(returned_at AS TIMESTAMP)    AS returned_at,
+        CAST(sale_price AS FLOAT)         AS sale_price
+    FROM {{ source('ecommerce', 'order_items') }}
 )
 
-select * from stg_order_items
+SELECT * FROM stg_order_items

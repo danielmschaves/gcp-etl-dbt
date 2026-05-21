@@ -1,16 +1,10 @@
--- models/order_status_distribution.sql
-
-{{ config(
-    schema='gold',
-    materialized='view'
-) }}
-
 WITH fact_order_items AS (
-    SELECT 
+    SELECT
         status
     FROM {{ ref('fact_order_items') }}
 )
-SELECT 
+
+SELECT
     status,
     COUNT(*) AS order_count
 FROM fact_order_items

@@ -1,18 +1,15 @@
-{{ config(materialized='table' )}}
-
-with stg_products as (
-    select 
-        cast(id as int) as product_id,
-        cast(cost as float) as cost,
-        cast(category as string) as category,
-        cast(name as string) as name,
-        cast(brand as string) as brand,
-        cast(retail_price as float) as retail_price,
-        cast(department as string) as department,
-        cast(sku as string) as sku,
-        cast(distribution_center_id as int) as distribution_center_id
-
-    from {{ source('ecommerce', 'products' ) }}
+WITH stg_products AS (
+    SELECT
+        CAST(id AS INTEGER)                    AS product_id,
+        CAST(cost AS FLOAT)                    AS cost,
+        CAST(category AS VARCHAR)              AS category,
+        CAST(name AS VARCHAR)                  AS name,
+        CAST(brand AS VARCHAR)                 AS brand,
+        CAST(retail_price AS FLOAT)            AS retail_price,
+        CAST(department AS VARCHAR)            AS department,
+        CAST(sku AS VARCHAR)                   AS sku,
+        CAST(distribution_center_id AS INTEGER) AS distribution_center_id
+    FROM {{ source('ecommerce', 'products') }}
 )
 
-select * from stg_products
+SELECT * FROM stg_products

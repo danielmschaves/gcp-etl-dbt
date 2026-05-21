@@ -1,42 +1,17 @@
-{{ config(
-    schema='gold',
-    materialized='table'
-) }}
-
-
-WITH all_dates AS (
-  SELECT CAST(created_at AS DATE) AS date
-  FROM {{ ref('stg_orders') }}
-),
-date_range AS (
-  SELECT
-    MIN(date) AS min_date,
-    MAX(date) AS max_date
-  FROM all_dates
-),
-filtered_dates AS (
-  SELECT date
-  FROM all_dates, date_range
-  WHERE date BETWEEN date_range.min_date AND date_range.max_date
-),
-date_keys AS (
-  SELECT
-    {{ format_date_key('date') }} AS date_key,
-    date,
-    EXTRACT(DAY FROM date) AS day,
-    EXTRACT(MONTH FROM date) AS month,
-    EXTRACT(QUARTER FROM date) AS quarter,
-    EXTRACT(YEAR FROM date) AS year,
-    EXTRACT(DOW FROM date) AS day_of_week
-  FROM filtered_dates
+WITH date_spine AS (
+    {{ dbt_utils.date_spine(
+        datepart="day",
+        start_date="cast('2019-01-01' as date)",
+        end_date="cast('2030-12-31' as date)"
+    ) }}
 )
 
 SELECT
-  DISTINCT(date_key) as date_key,
-  date,
-  day,
-  month,
-  quarter,
-  year,
-  day_of_week
-FROM date_keys
+    {{ format_date_key('date_day') }}       AS date_key,
+    date_day                                AS date,
+    EXTRACT(DAY     FROM date_day)          AS day,
+    EXTRACT(MONTH   FROM date_day)          AS month,
+    EXTRACT(QUARTER FROM date_day)          AS quarter,
+    EXTRACT(YEAR    FROM date_day)          AS year,
+    EXTRACT(DOW     FROM date_day)          AS day_of_week
+FROM date_spine

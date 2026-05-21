@@ -1,103 +1,98 @@
 import os
+import time
+from typing import Dict, List, Optional
+
+import pyarrow as pa
+from google.auth.exceptions import DefaultCredentialsError
 from google.cloud import bigquery
 from google.oauth2 import service_account
-from google.auth.exceptions import DefaultCredentialsError
 from loguru import logger
-from typing import List
-import time
-from models import EcommerceJobParameters
-import pandas as pd
-import pyarrow as pa
+
+from ingestion.models import EcommerceJobParameters, TABLES_WITH_TIMESTAMP
 
 ECOMMERCE_PUBLIC_DATASET = "bigquery-public-data.thelook_ecommerce"
 
+_MAX_RETRIES = 3
+
 
 def build_ecommerce_query(
-    params: EcommerceJobParameters, ecom_public_dataset: str = ECOMMERCE_PUBLIC_DATASET
+    params: EcommerceJobParameters,
+    ecom_public_dataset: str = ECOMMERCE_PUBLIC_DATASET,
+    watermarks: Optional[Dict[str, str]] = None,
 ) -> List[str]:
     """
-    Generate SQL queries to query specific tables based on provided parameters.
-
-    Args:
-        params (EcommerceJobParameters): The parameters for the Ecommerce job.
-        ecom_public_dataset (str, optional): The name of the Ecommerce public dataset. Defaults to ECOMMERCE_PUBLIC_DATASET.
-
-    Returns:
-        List[str]: A list of SQL queries.
-
+    Generate incremental SQL queries for each requested table.
+    When a watermark exists for a table, only rows newer than the
+    last recorded created_at are fetched.
     """
-    queries = []
+    watermarks = watermarks or {}
+    queries: List[str] = []
+
     for table_name in params.table_names:
-        if table_name:
-            query = f"SELECT * FROM `{ecom_public_dataset}.{table_name}`"
-            queries.append(query)
+        if not table_name:
+            logger.warning(f"Skipping empty table name")
+            continue
+
+        query = f"SELECT * FROM `{ecom_public_dataset}.{table_name}`"
+
+        if table_name in TABLES_WITH_TIMESTAMP and table_name in watermarks:
+            last_ts = watermarks[table_name]
+            query += f" WHERE created_at > TIMESTAMP('{last_ts}')"
+            logger.info(f"Incremental load for '{table_name}' since {last_ts}")
         else:
-            logger.warning(f"Invalid table name provided: {table_name}")
+            logger.info(f"Full load for '{table_name}'")
+
+        queries.append(query)
+
     return queries
 
 
 def get_bigquery_client(project_name: str) -> bigquery.Client:
-    """
-    Get BigQuery client.
-
-    Args:
-        project_name (str): The name of the BigQuery project.
-
-    Returns:
-        bigquery.Client: The BigQuery client object.
-
-    Raises:
-        EnvironmentError: If no valid credentials are found for BigQuery authentication.
-        DefaultCredentialsError: If there is an error with the default credentials.
-
-    """
+    """Build a BigQuery client from a service account file or ambient credentials."""
     try:
         service_account_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
-
         if service_account_path:
             credentials = service_account.Credentials.from_service_account_file(
                 service_account_path
             )
-            bigquery_client = bigquery.Client(
-                project=project_name, credentials=credentials
+            return bigquery.Client(project=project_name, credentials=credentials)
+        raise EnvironmentError("GOOGLE_APPLICATION_CREDENTIALS is not set.")
+    except DefaultCredentialsError as e:
+        raise e
+
+
+def _execute_with_retry(
+    bigquery_client: bigquery.Client, query: str, table_name: str
+) -> pa.Table:
+    """Execute a BigQuery query and return a PyArrow table, with exponential backoff retry."""
+    for attempt in range(_MAX_RETRIES):
+        try:
+            start = time.time()
+            result = bigquery_client.query(query).to_arrow()
+            elapsed = time.time() - start
+            logger.info(
+                f"'{table_name}' fetched {result.num_rows:,} rows in {elapsed:.2f}s"
             )
-            return bigquery_client
-
-        raise EnvironmentError(
-            "No valid credentials found for BigQuery authentication."
-        )
-
-    except DefaultCredentialsError as creds_error:
-        raise creds_error
+            return result
+        except Exception as exc:
+            if attempt == _MAX_RETRIES - 1:
+                logger.error(f"All {_MAX_RETRIES} attempts failed for '{table_name}': {exc}")
+                raise
+            wait = 2 ** attempt
+            logger.warning(
+                f"Attempt {attempt + 1}/{_MAX_RETRIES} failed for '{table_name}': {exc}. "
+                f"Retrying in {wait}s..."
+            )
+            time.sleep(wait)
 
 
 def get_bigquery_results(
-    queries: List[str], table_names: List[str], bigquery_client: bigquery.Client
-) -> dict:
-    """
-    Executes a list of BigQuery queries and returns the results as a dictionary of PyArrow Tables.
-
-    Args:
-        queries (List[str]): A list of BigQuery queries to execute.
-        table_names (List[str]): A list of table names corresponding to each query.
-        bigquery_client (bigquery.Client): The BigQuery client object used to execute the queries.
-
-    Returns:
-        dict: A dictionary where the keys are the table names and the values are the query results as PyArrow Tables.
-    """
-    tables = {}
+    queries: List[str],
+    table_names: List[str],
+    bigquery_client: bigquery.Client,
+) -> Dict[str, pa.Table]:
+    """Execute queries and return results keyed by table name."""
+    tables: Dict[str, pa.Table] = {}
     for query, table_name in zip(queries, table_names):
-        try:
-            logger.info(f"Running query for table: {table_name}")
-            start_time = time.time()
-            query_job = bigquery_client.query(query)  # Start the query job
-            table = query_job.to_arrow()  # Fetch the results as a PyArrow Table
-            elapsed_time = time.time() - start_time
-            logger.info(
-                f"Query for {table_name} executed and data loaded in {elapsed_time:.2f} seconds"
-            )
-            tables[table_name] = table
-        except Exception as e:
-            logger.error(f"Error running query for {table_name}: {e}")
-            raise
+        tables[table_name] = _execute_with_retry(bigquery_client, query, table_name)
     return tables

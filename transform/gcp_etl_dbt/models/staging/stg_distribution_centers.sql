@@ -1,13 +1,10 @@
-
-{{ config(materialized='table' ) }}
-
-with stg_distribution_centers as (
-    select 
-        cast(id as int) as id,
-        cast(name as string) as name,
-        cast(latitude as float) as latitude,
-        cast(longitude as float) as longitude
-    from {{ source('ecommerce', 'distribution_centers' ) }}
+WITH stg_distribution_centers AS (
+    SELECT
+        CAST(id AS INTEGER)        AS id,
+        CAST(name AS VARCHAR)      AS name,
+        CAST(latitude AS FLOAT)    AS latitude,
+        CAST(longitude AS FLOAT)   AS longitude
+    FROM {{ source('ecommerce', 'distribution_centers') }}
 )
 
-select * from stg_distribution_centers
+SELECT * FROM stg_distribution_centers
