@@ -1,10 +1,5 @@
-{{ config(
-    schema='gold',
-    materialized='table'
-) }}
-
-with dim_products as (
-    select
+WITH dim_products AS (
+    SELECT
         product_id,
         cost,
         name,
@@ -13,7 +8,7 @@ with dim_products as (
         department,
         sku,
         retail_price
-    from {{ ref('stg_products') }}
+    FROM {{ ref('stg_products') }}
 )
 
-select * from dim_products
+SELECT * FROM dim_products

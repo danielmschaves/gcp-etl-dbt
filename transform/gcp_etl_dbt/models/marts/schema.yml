@@ -140,6 +140,10 @@ models:
         description: "User identifier"
         tests:
           - not_null
+      - name: created_at
+        description: "Order item creation timestamp (used as incremental watermark)"
+        tests:
+          - not_null
       - name: order_date_key
         description: "Order date key"
         tests:
@@ -160,14 +164,125 @@ models:
         description: "Order item sale price"
         tests:
           - not_null
-      - name: quantity
-        description: "Order item quantity"
+      - name: num_of_item
+        description: "Number of items in the order"
         tests:
           - not_null
       - name: cost
         description: "Order item cost"
         tests:
           - not_null
+      - name: profit
+        description: "Sale price minus cost"
+        tests:
+          - not_null
+      - name: margin
+        description: "Profit divided by sale price"
 
+  - name: mart_sales_by_state
+    description: "Total sales and order count by US state"
+    columns:
+      - name: state
+        description: "US state"
+      - name: total_sales
+        description: "Total revenue for the state"
+      - name: order_count
+        description: "Number of distinct orders"
 
-      
+  - name: mart_profit_by_category
+    description: "Revenue, profit, and margin by product category"
+    columns:
+      - name: category
+        description: "Product category"
+      - name: total_revenue
+        description: "Total revenue"
+      - name: total_profit
+        description: "Total gross profit"
+      - name: avg_margin_pct
+        description: "Average margin percentage"
+      - name: items_sold
+        description: "Number of items sold"
+
+  - name: mart_brand_performance
+    description: "Revenue, profit, and margin by brand and category"
+    columns:
+      - name: brand
+        description: "Product brand"
+      - name: category
+        description: "Product category"
+      - name: total_revenue
+        description: "Total revenue"
+      - name: total_profit
+        description: "Total gross profit"
+      - name: avg_margin_pct
+        description: "Average margin percentage"
+      - name: items_sold
+        description: "Number of items sold"
+
+  - name: mart_product_margin
+    description: "Top 20 products by profit with margin metrics"
+    columns:
+      - name: product_name
+        description: "Product name"
+      - name: category
+        description: "Product category"
+      - name: brand
+        description: "Product brand"
+      - name: total_revenue
+        description: "Total revenue"
+      - name: total_profit
+        description: "Total gross profit"
+      - name: avg_margin_pct
+        description: "Average margin percentage"
+      - name: items_sold
+        description: "Number of items sold"
+
+  - name: mart_traffic_source_performance
+    description: "Revenue, orders, and users by acquisition traffic source"
+    columns:
+      - name: traffic_source
+        description: "Acquisition channel"
+      - name: total_revenue
+        description: "Total revenue"
+      - name: order_count
+        description: "Number of distinct orders"
+      - name: avg_order_value
+        description: "Average order value"
+      - name: user_count
+        description: "Number of distinct users"
+
+  - name: mart_age_group_revenue
+    description: "Revenue and order metrics by customer age group"
+    columns:
+      - name: age_group
+        description: "Age bucket (<25, 25-34, 35-44, 45-54, 55+)"
+      - name: user_count
+        description: "Number of distinct users"
+      - name: total_revenue
+        description: "Total revenue"
+      - name: avg_order_value
+        description: "Average order value"
+
+  - name: mart_return_rate
+    description: "Return rate by product category"
+    columns:
+      - name: category
+        description: "Product category"
+      - name: total_items
+        description: "Total items sold"
+      - name: returned_items
+        description: "Number of returned items"
+      - name: return_rate_pct
+        description: "Return rate as a percentage"
+
+  - name: mart_event_funnel
+    description: "Event counts, sessions, and users by event type from stg_events"
+    columns:
+      - name: event_type
+        description: "Type of user event"
+      - name: event_count
+        description: "Total number of events"
+      - name: unique_sessions
+        description: "Number of distinct sessions"
+      - name: unique_users
+        description: "Number of distinct users"

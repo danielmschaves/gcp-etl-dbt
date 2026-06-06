@@ -1,0 +1,15 @@
+[sqlfluff]
+dialect = duckdb
+templater = dbt
+sql_file_exts = .sql
+max_line_length = 100
+
+[sqlfluff:templater:dbt]
+project_dir = transform/gcp_etl_dbt
+profiles_dir = transform/gcp_etl_dbt
+
+[sqlfluff:rules:capitalisation.keywords]
+capitalisation_policy = upper
+
+[sqlfluff:rules:capitalisation.identifiers]
+capitalisation_policy = lower

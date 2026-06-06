@@ -1,20 +1,18 @@
-{{ config(materialized='table' )}}
-
-with stg_invetory_items as (
-    select 
-        cast(id as int) as id,
-        cast(product_id as int) as product_id,
-        cast(created_at as timestamp) as created_at,
-        cast(sold_at as timestamp) as sold_at,
-        cast(cost as float) as cost,
-        cast(product_category as string) as product_category,
-        cast(product_name as string) as product_name,
-        cast(product_brand as string) as product_brand,
-        cast(product_retail_price as float) as product_retail_price,
-        cast(product_department as string) as product_department,
-        cast(product_sku as string) as product_sku,
-        cast(product_distribution_center_id as int) as product_distribution_center_id
-    from {{ source('ecommerce', 'inventory_items' ) }}
+WITH stg_inventory_items AS (
+    SELECT
+        CAST(id AS INTEGER)                            AS id,
+        CAST(product_id AS INTEGER)                    AS product_id,
+        CAST(created_at AS TIMESTAMP)                  AS created_at,
+        CAST(sold_at AS TIMESTAMP)                     AS sold_at,
+        CAST(cost AS FLOAT)                            AS cost,
+        CAST(product_category AS VARCHAR)              AS product_category,
+        CAST(product_name AS VARCHAR)                  AS product_name,
+        CAST(product_brand AS VARCHAR)                 AS product_brand,
+        CAST(product_retail_price AS FLOAT)            AS product_retail_price,
+        CAST(product_department AS VARCHAR)            AS product_department,
+        CAST(product_sku AS VARCHAR)                   AS product_sku,
+        CAST(product_distribution_center_id AS INTEGER) AS product_distribution_center_id
+    FROM {{ source('ecommerce', 'inventory_items') }}
 )
 
-select * from stg_invetory_items
+SELECT * FROM stg_inventory_items

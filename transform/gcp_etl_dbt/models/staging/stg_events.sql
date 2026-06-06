@@ -1,22 +1,19 @@
-{{ config(materialized='table' )}}
-
-with stg_events as (
-    select 
-        cast(id as int) as event_id,
-        cast(user_id as int) as user_id,
-        cast(sequence_number as int) as sequence_number,
-        cast(session_id as string) as session_id,
-        cast(created_at as timestamp) as created_at,
-        cast(ip_address as string) as ip_address,
-        cast(city as string) as city,
-        cast(state as string) as state,
-        cast(postal_code as string) as postal_code,
-        cast(browser as string) as browser, 
-        cast(traffic_source as string) as traffic_source,
-        cast(uri as string) as uri,
-        cast(event_type as string) as event_type
-    
-    from {{ source('ecommerce', 'events' ) }}
+WITH stg_events AS (
+    SELECT
+        CAST(id AS INTEGER)               AS event_id,
+        CAST(user_id AS INTEGER)          AS user_id,
+        CAST(sequence_number AS INTEGER)  AS sequence_number,
+        CAST(session_id AS VARCHAR)       AS session_id,
+        CAST(created_at AS TIMESTAMP)     AS created_at,
+        CAST(ip_address AS VARCHAR)       AS ip_address,
+        CAST(city AS VARCHAR)             AS city,
+        CAST(state AS VARCHAR)            AS state,
+        CAST(postal_code AS VARCHAR)      AS postal_code,
+        CAST(browser AS VARCHAR)          AS browser,
+        CAST(traffic_source AS VARCHAR)   AS traffic_source,
+        CAST(uri AS VARCHAR)              AS uri,
+        CAST(event_type AS VARCHAR)       AS event_type
+    FROM {{ source('ecommerce', 'events') }}
 )
 
-select * from stg_events
+SELECT * FROM stg_events

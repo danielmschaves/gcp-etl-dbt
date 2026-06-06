@@ -1,12 +1,5 @@
--- model/dim_orders.sql
-
-{{ config(
-    schema='gold',
-    materialized='table'
-) }}
-
-with dim_orders as (
-    select
+WITH dim_orders AS (
+    SELECT
         order_id,
         user_id,
         status,
@@ -15,7 +8,7 @@ with dim_orders as (
         delivered_at,
         returned_at,
         num_of_item
-    from {{ ref('stg_orders') }}
+    FROM {{ ref('stg_orders') }}
 )
 
-select * from dim_orders
+SELECT * FROM dim_orders
